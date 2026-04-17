@@ -18,3 +18,10 @@ create table if not exists livros (
   preco numeric(10,2) not null,
   autor_id integer references autores(id) on delete restrict
 );
+Alter table livros add paginas integer;
+
+alter table livros alter column titulo type varchar(200);
+
+alter table livros add constraint chk_preco check (preco > 0);
+
+Alter table livros drop column paginas;
