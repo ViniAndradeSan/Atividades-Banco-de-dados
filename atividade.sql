@@ -45,3 +45,37 @@ CREATE TABLE consultas (
     status VARCHAR(50) DEFAULT 'Agendada', 
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
 );
+
+create table artistas_caju (
+  id serial primary key,
+  nome varchar(255) not null unique,
+  pais varchar(100),
+  data_cadastro timestamp default current_timestamp
+);
+
+create table albuns_caju (
+  id serial primary key,
+  titulo varchar(255) not null,
+  ano int not null check (ano > 1850),
+  artista_id INT NOT NULL,
+  preco decimal(10,2),
+  foreign key (artista_id) references artistas_caju(id),
+  check (preco is null or preco > 0)
+);
+
+CREATE TABLE faixas_caju (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    duracao_segundos INT NOT NULL CHECK (duracao_segundos > 0),
+    album_id INT NOT NULL,
+    FOREIGN KEY (album_id) REFERENCES albuns_caju(id)
+);
+
+ALTER TABLE faixas_caju
+ADD COLUMN genero_musical VARCHAR(50)
+CHECK (genero_musical IN ('Rock', 'Pop', 'Jazz', 'Samba', 'Forró'));
+
+
+DELETE FROM faixas_caju WHERE album_id IN (SELECT id FROM albuns_caju WHERE artista_id = 1);
+DELETE FROM albuns_caju WHERE artista_id = 1;
+DELETE FROM artistas_caju WHERE id = 1;
