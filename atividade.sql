@@ -93,3 +93,43 @@ where id = 1;
 update albuns_caju
 set preco = preco * 1.1
 where id = 1;
+
+insert into artistas_caju (nome) values
+('Alberto'), ('Bernardo'), ('Carlinhos'), ('Daniel'), ('Emeson');
+
+insert into albuns_caju (titulo, preco, artista_id, ano) values
+('Revida',  45.00, 1, 2019), ('Banana Nana', 30.66, 1, 2024) ,
+('Carlinhos e você', 66.33, 3, 2021), ('Ceu de cada dia', 77.77, 3, 2020);
+
+insert into faixas_caju (nome, duracao_segundos, album_id) values
+('Expresso 2222', 218, 2), ('Back in Bahia', 275, 2), ('You Don''t Know Me', 230, 3);
+
+update artistas_caju set 
+nome = 'Alberteson'
+where id = 1;
+
+update albuns_caju set
+preco = 32.23
+where id = 4
+
+update faixas_caju set
+duracao_segundos = duracao_segundos + 30
+where id = 2
+
+delete from faixas_caju 
+where album_id in (
+  select id from albuns_caju
+  where artista_id = 1
+);
+
+delete from albuns_caju
+where artista_id = 1;
+
+delete from artistas_caju
+where id = 1;
+
+insert into artistas_caju (nome)
+select name
+from artist
+limit 3
+returning *;
