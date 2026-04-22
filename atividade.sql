@@ -79,3 +79,17 @@ CHECK (genero_musical IN ('Rock', 'Pop', 'Jazz', 'Samba', 'Forró'));
 DELETE FROM faixas_caju WHERE album_id IN (SELECT id FROM albuns_caju WHERE artista_id = 1);
 DELETE FROM albuns_caju WHERE artista_id = 1;
 DELETE FROM artistas_caju WHERE id = 1;
+
+insert INTO artistas_caju (nome, pais)
+values ('Djvan', 'Brasil'), ('Nina Simone', 'EUA');
+
+insert into artistas_caju (nome)
+select "name" from  "artist" limit 3;
+
+update albuns_caju
+set preco = 34.90
+where id = 1;
+
+update albuns_caju
+set preco = preco * 1.1
+where id = 1;
