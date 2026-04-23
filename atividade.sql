@@ -133,3 +133,11 @@ select name
 from artist
 limit 3
 returning *;
+
+begin;
+
+truncate table track restart IDENTITY cascade;
+select cont(*) from track
+
+rollback;
+select cont(*) from track
