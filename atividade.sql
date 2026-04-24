@@ -141,3 +141,6 @@ select cont(*) from track
 
 rollback;
 select cont(*) from track
+
+select count(*) from track
+where milliseconds between 20000 and 300000
