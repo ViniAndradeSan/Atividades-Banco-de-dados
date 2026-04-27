@@ -144,3 +144,61 @@ select cont(*) from track
 
 select count(*) from track
 where milliseconds between 20000 and 300000
+
+select first_name as nome, last_name as sobrenome, country as pais from customer
+where country in ('Brazil', 'Canada', 'France')
+order by sobrenome;
+
+SELECT * from track
+where composer is null
+order by name asc
+
+select first_name as nome, last_name as sobrenome, country as pais from customer
+where country in ('Brazil', 'Canada', 'France')
+order by sobrenome;
+
+SELECT COUNT(*) as NumerosDeNulos from track
+where composer is null
+
+select COUNT(*) as entre4a6 from track
+where milliseconds between 240000 and 360000
+
+select name as Nome, milliseconds as Duração from track
+where milliseconds between 240000 and 360000
+order by milliseconds desc
+
+select name as "Nome", milliseconds as "Duração" from track
+where milliseconds between 240000 and 360000
+order by milliseconds desc
+
+select
+  sum(total) as faturamento_total,
+  round(avg(total), 2) as ticket_medio
+from
+  invoice
+select
+  genre_id as genero,
+  count(track_id) as total_de_faixas
+from
+  track
+group by
+  genero
+having
+  count(*) > 50
+order by
+  genero
+
+select
+  billing_country as pais_de_compra,
+  sum(total) as faturamento_total,
+  count(invoice_id) as total_faturas,
+  round(avg(total), 2) as ticket_medio
+from
+  invoice
+where
+  billing_country in ('France', 'Germany', 'Italy', 'Potugal')
+group by
+  pais_de_compra
+having
+  sum(total) > 100
+order by faturamento_total
