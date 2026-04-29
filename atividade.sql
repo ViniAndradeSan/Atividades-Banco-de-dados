@@ -202,3 +202,35 @@ group by
 having
   sum(total) > 100
 order by faturamento_total
+
+select
+  t.name as nome_do_musica,
+  al.title as titulo_album,
+  t.unit_price as preco_unitario,
+  ar.name as nome_do_artista
+from
+  track t
+  inner join album al on t.album_id = al.album_id
+  inner join artist ar on al.artist_id = ar.artist_id
+select
+  ar.artist_id as id,
+  ar.name as nome_do_artista,
+  count(t.track_id)
+from
+  track t
+  inner join album al on t.album_id = al.album_id
+  inner join artist ar on al.artist_id = ar.artist_id
+group by
+  id,
+  nome_do_artista
+  
+select
+  c.first_name,
+  c.last_name
+from
+  customer c
+  left join invoice i on c.customer_id = i.customer_id
+where
+  i.invoice_id is null;
+
+select concat(first_name,' ',last_name) as Completo from customer
