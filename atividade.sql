@@ -234,3 +234,51 @@ where
   i.invoice_id is null;
 
 select concat(first_name,' ',last_name) as Completo from customer
+
+select
+  CONCAT(first_name, ' ', last_name) as nome_completo,
+  SUM(i.total) as total_gasto
+from
+  customer c
+  inner join invoice i on i.customer_id = c.customer_id
+group by
+  c.customer_id,
+  first_name,
+  last_name
+order by
+  total_gasto desc;
+
+  select
+  a.album_id,
+  a.title as Titulo,
+  a.artist_id
+from
+  album a
+  left join track t on a.album_id = t.album_id
+where
+  t.track_id is null; 
+
+  select
+  sum(invoL.quantity) as Total_Venda,
+  g.name as Nome_do_Genero
+from
+  invoice_line invoL
+  inner join track t on invoL.track_id = t.track_id
+  inner join genre g on t.genre_id = g.genre_id
+group by
+  g.name
+order by
+  Total_Venda desc;
+
+select
+  avg(total_por_cliente)
+from
+  (
+    select
+      customer_id,
+      sum(total) as total_por_cliente
+    from
+      invoice
+    group by
+      customer_id
+  ) as totais;
