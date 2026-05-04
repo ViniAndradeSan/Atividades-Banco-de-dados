@@ -270,6 +270,9 @@ group by
 order by
   Total_Venda desc;
 
+select customer_id, total from invoice
+where total > (seledt avg(total) from invoice);
+
 select
   avg(total_por_cliente)
 from
