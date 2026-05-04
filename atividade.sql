@@ -400,15 +400,54 @@ where
       invoice_line
   );
 
+  select
+    avg(total_por_cliente)
+  from
+    (
+      select
+        customer_id,
+        sum(total) as total_por_cliente
+      from
+        invoice
+      group by
+        customer_id
+    ) as totais;
+
+create view v_sales_by_customer as
 select
-  avg(total_por_cliente)
+  customer_id,
+  sum(total) as total_spent,
+  count(invoice_id) as total_purchases
 from
-  (
-    select
-      customer_id,
-      sum(total) as total_por_cliente
-    from
-      invoice
-    group by
-      customer_id
-  ) as totais;
+  invoice
+group by
+  customer_id;
+
+select * from v_sales_by_customer
+
+create or replace view v_sales_by_customer as
+select
+  customer_id,
+  sum(total) as total_spent,
+  count(invoice_id) as total_purchases,
+  max(invoice_date) as last_purchase_date
+from
+  invoice
+group by
+  customer_id;
+
+select * from v_sales_by_customer
+
+drop view if exists v_sales_by_customer;
+create or replace view v_sales_by_customer as
+select
+  customer_id,
+  sum(total) as total_spent,
+  count(invoice_id) as total_purchases,
+  max(invoice_date) as last_purchase_date
+from
+  invoice
+group by
+  customer_id;
+
+select * from v_sales_by_customer
