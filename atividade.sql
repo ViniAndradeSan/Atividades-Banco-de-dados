@@ -1,33 +1,34 @@
-CREATE TABLE IF NOT EXISTS clientes (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(100) NOT NULL,
-  email VARCHAR(255) UNIQUE NOT NULL,
-  status VARCHAR(20) DEFAULT 'ativo',
-  limite NUMERIC(10,2) CHECK (limite >= 0),
-  criado_em TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+create table if not exists clientes (
+  id SERIAL primary key,
+  name VARCHAR(100) not null,
+  email VARCHAR(255) unique not null,
+  status VARCHAR(20) default 'ativo',
+  limite NUMERIC(10, 2) check (limite >= 0),
+  criado_em TIMESTAMPTZ default CURRENT_TIMESTAMP
 );
 
-CREATE TABLE if not exists autores (
-  id SERIAL primary key,
-  nome VARCHAR(100) NOT NULL 
-);
+create table if not exists autores (id SERIAL primary key, nome VARCHAR(100) not null);
 
 create table if not exists livros (
   id SERIAL primary key,
-  titulo VARCHAR(150) NOT null,
-  preco numeric(10,2) not null,
-  autor_id integer references autores(id) on delete restrict
+  titulo VARCHAR(150) not null,
+  preco numeric(10, 2) not null,
+  autor_id integer references autores (id) on delete restrict
 );
 
-Alter table livros add paginas integer;
+alter table livros
+add paginas integer;
 
-alter table livros alter column titulo type varchar(200);
+alter table livros
+alter column titulo type varchar(200);
 
-alter table livros add constraint chk_preco check (preco > 0);
+alter table livros
+add constraint chk_preco check (preco > 0);
 
-Alter table livros drop column paginas;
+alter table livros
+drop column paginas;
 
-CREATE TABLE consultas (
+create table consultas (
   id INTEGER,
   paciente VARCHAR(100),
   medico VARCHAR(100),
@@ -36,14 +37,14 @@ CREATE TABLE consultas (
   status VARCHAR(50)
 );
 
-CREATE TABLE consultas (
-    id SERIAL PRIMARY KEY,          
-    paciente_nome VARCHAR(100) NOT NULL, 
-    medico_nome VARCHAR(100) NOT NULL,   
-    data_consulta TIMESTAMP NOT NULL,  
-    valor NUMERIC(10, 2) DEFAULT 0.00, 
-    status VARCHAR(50) DEFAULT 'Agendada', 
-    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
+create table consultas (
+  id SERIAL primary key,
+  paciente_nome VARCHAR(100) not null,
+  medico_nome VARCHAR(100) not null,
+  data_consulta TIMESTAMP not null,
+  valor NUMERIC(10, 2) default 0.00,
+  status VARCHAR(50) default 'Agendada',
+  criado_em TIMESTAMP default CURRENT_TIMESTAMP
 );
 
 create table artistas_caju (
@@ -57,120 +58,224 @@ create table albuns_caju (
   id serial primary key,
   titulo varchar(255) not null,
   ano int not null check (ano > 1850),
-  artista_id INT NOT NULL,
-  preco decimal(10,2),
-  foreign key (artista_id) references artistas_caju(id),
-  check (preco is null or preco > 0)
+  artista_id INT not null,
+  preco decimal(10, 2),
+  foreign key (artista_id) references artistas_caju (id),
+  check (
+    preco is null
+    or preco > 0
+  )
 );
 
-CREATE TABLE faixas_caju (
-    id SERIAL PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL,
-    duracao_segundos INT NOT NULL CHECK (duracao_segundos > 0),
-    album_id INT NOT NULL,
-    FOREIGN KEY (album_id) REFERENCES albuns_caju(id)
+create table faixas_caju (
+  id SERIAL primary key,
+  nome VARCHAR(255) not null,
+  duracao_segundos INT not null check (duracao_segundos > 0),
+  album_id INT not null,
+  foreign KEY (album_id) references albuns_caju (id)
 );
 
-ALTER TABLE faixas_caju
-ADD COLUMN genero_musical VARCHAR(50)
-CHECK (genero_musical IN ('Rock', 'Pop', 'Jazz', 'Samba', 'Forró'));
-
-
-DELETE FROM faixas_caju WHERE album_id IN (SELECT id FROM albuns_caju WHERE artista_id = 1);
-DELETE FROM albuns_caju WHERE artista_id = 1;
-DELETE FROM artistas_caju WHERE id = 1;
-
-insert INTO artistas_caju (nome, pais)
-values ('Djvan', 'Brasil'), ('Nina Simone', 'EUA');
-
-insert into artistas_caju (nome)
-select "name" from  "artist" limit 3;
-
-update albuns_caju
-set preco = 34.90
-where id = 1;
-
-update albuns_caju
-set preco = preco * 1.1
-where id = 1;
-
-insert into artistas_caju (nome) values
-('Alberto'), ('Bernardo'), ('Carlinhos'), ('Daniel'), ('Emeson');
-
-insert into albuns_caju (titulo, preco, artista_id, ano) values
-('Revida',  45.00, 1, 2019), ('Banana Nana', 30.66, 1, 2024) ,
-('Carlinhos e você', 66.33, 3, 2021), ('Ceu de cada dia', 77.77, 3, 2020);
-
-insert into faixas_caju (nome, duracao_segundos, album_id) values
-('Expresso 2222', 218, 2), ('Back in Bahia', 275, 2), ('You Don''t Know Me', 230, 3);
-
-update artistas_caju set 
-nome = 'Alberteson'
-where id = 1;
-
-update albuns_caju set
-preco = 32.23
-where id = 4
-
-update faixas_caju set
-duracao_segundos = duracao_segundos + 30
-where id = 2
-
-delete from faixas_caju 
-where album_id in (
-  select id from albuns_caju
-  where artista_id = 1
+alter table faixas_caju
+add column genero_musical VARCHAR(50) check (
+  genero_musical in ('Rock', 'Pop', 'Jazz', 'Samba', 'Forró')
 );
+
+delete from faixas_caju
+where
+  album_id in (
+    select
+      id
+    from
+      albuns_caju
+    where
+      artista_id = 1
+  );
 
 delete from albuns_caju
-where artista_id = 1;
+where
+  artista_id = 1;
 
 delete from artistas_caju
-where id = 1;
+where
+  id = 1;
 
-insert into artistas_caju (nome)
-select name
-from artist
-limit 3
-returning *;
+insert into
+  artistas_caju (nome, pais)
+values
+  ('Djvan', 'Brasil'),
+  ('Nina Simone', 'EUA');
+
+insert into
+  artistas_caju (nome)
+select
+  "name"
+from
+  "artist"
+limit
+  3;
+
+update albuns_caju
+set
+  preco = 34.90
+where
+  id = 1;
+
+update albuns_caju
+set
+  preco = preco * 1.1
+where
+  id = 1;
+
+insert into
+  artistas_caju (nome)
+values
+  ('Alberto'),
+  ('Bernardo'),
+  ('Carlinhos'),
+  ('Daniel'),
+  ('Emeson');
+
+insert into
+  albuns_caju (titulo, preco, artista_id, ano)
+values
+  ('Revida', 45.00, 1, 2019),
+  ('Banana Nana', 30.66, 1, 2024),
+  ('Carlinhos e você', 66.33, 3, 2021),
+  ('Ceu de cada dia', 77.77, 3, 2020);
+
+insert into
+  faixas_caju (nome, duracao_segundos, album_id)
+values
+  ('Expresso 2222', 218, 2),
+  ('Back in Bahia', 275, 2),
+  ('You Don''t Know Me', 230, 3);
+
+update artistas_caju
+set
+  nome = 'Alberteson'
+where
+  id = 1;
+
+update albuns_caju
+set
+  preco = 32.23
+where
+  id = 4
+update faixas_caju
+set
+  duracao_segundos = duracao_segundos + 30
+where
+  id = 2
+delete from faixas_caju
+where
+  album_id in (
+    select
+      id
+    from
+      albuns_caju
+    where
+      artista_id = 1
+  );
+
+delete from albuns_caju
+where
+  artista_id = 1;
+
+delete from artistas_caju
+where
+  id = 1;
+
+insert into
+  artistas_caju (nome)
+select
+  name
+from
+  artist
+limit
+  3
+returning
+  *;
 
 begin;
 
 truncate table track restart IDENTITY cascade;
-select cont(*) from track
 
+select
+  cont (*)
+from
+  track
 rollback;
-select cont(*) from track
 
-select count(*) from track
-where milliseconds between 20000 and 300000
+select
+  cont (*)
+from
+  track
+select
+  count(*)
+from
+  track
+where
+  milliseconds between 20000 and 300000
+select
+  first_name as nome,
+  last_name as sobrenome,
+  country as pais
+from
+  customer
+where
+  country in ('Brazil', 'Canada', 'France')
+order by
+  sobrenome;
 
-select first_name as nome, last_name as sobrenome, country as pais from customer
-where country in ('Brazil', 'Canada', 'France')
-order by sobrenome;
+select
+  *
+from
+  track
+where
+  composer is null
+order by
+  name asc
+select
+  first_name as nome,
+  last_name as sobrenome,
+  country as pais
+from
+  customer
+where
+  country in ('Brazil', 'Canada', 'France')
+order by
+  sobrenome;
 
-SELECT * from track
-where composer is null
-order by name asc
-
-select first_name as nome, last_name as sobrenome, country as pais from customer
-where country in ('Brazil', 'Canada', 'France')
-order by sobrenome;
-
-SELECT COUNT(*) as NumerosDeNulos from track
-where composer is null
-
-select COUNT(*) as entre4a6 from track
-where milliseconds between 240000 and 360000
-
-select name as Nome, milliseconds as Duração from track
-where milliseconds between 240000 and 360000
-order by milliseconds desc
-
-select name as "Nome", milliseconds as "Duração" from track
-where milliseconds between 240000 and 360000
-order by milliseconds desc
-
+select
+  COUNT(*) as NumerosDeNulos
+from
+  track
+where
+  composer is null
+select
+  COUNT(*) as entre4a6
+from
+  track
+where
+  milliseconds between 240000 and 360000
+select
+  name as Nome,
+  milliseconds as Duração
+from
+  track
+where
+  milliseconds between 240000 and 360000
+order by
+  milliseconds desc
+select
+  name as "Nome",
+  milliseconds as "Duração"
+from
+  track
+where
+  milliseconds between 240000 and 360000
+order by
+  milliseconds desc
 select
   sum(total) as faturamento_total,
   round(avg(total), 2) as ticket_medio
@@ -187,7 +292,6 @@ having
   count(*) > 50
 order by
   genero
-
 select
   billing_country as pais_de_compra,
   sum(total) as faturamento_total,
@@ -201,8 +305,8 @@ group by
   pais_de_compra
 having
   sum(total) > 100
-order by faturamento_total
-
+order by
+  faturamento_total
 select
   t.name as nome_do_musica,
   al.title as titulo_album,
@@ -223,7 +327,6 @@ from
 group by
   id,
   nome_do_artista
-  
 select
   c.first_name,
   c.last_name
@@ -233,8 +336,10 @@ from
 where
   i.invoice_id is null;
 
-select concat(first_name,' ',last_name) as Completo from customer
-
+select
+  concat(first_name, ' ', last_name) as Completo
+from
+  customer
 select
   CONCAT(first_name, ' ', last_name) as nome_completo,
   SUM(i.total) as total_gasto
@@ -248,7 +353,7 @@ group by
 order by
   total_gasto desc;
 
-  select
+select
   a.album_id,
   a.title as Titulo,
   a.artist_id
@@ -256,9 +361,9 @@ from
   album a
   left join track t on a.album_id = t.album_id
 where
-  t.track_id is null; 
+  t.track_id is null;
 
-  select
+select
   sum(invoL.quantity) as Total_Venda,
   g.name as Nome_do_Genero
 from
@@ -270,8 +375,30 @@ group by
 order by
   Total_Venda desc;
 
-select customer_id, total from invoice
-where total > (seledt avg(total) from invoice);
+select
+  customer_id,
+  total
+from
+  invoice
+where
+  total > (
+    seledt avg(total)
+    from
+      invoice
+  );
+
+select
+  track_id,
+  name
+from
+  track
+where
+  track_id not in (
+    select distinct
+      track_id
+    from
+      invoice_line
+  );
 
 select
   avg(total_por_cliente)
